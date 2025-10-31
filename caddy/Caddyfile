@@ -1,0 +1,31 @@
+{
+    # Optional global options
+    email {$CADDY_EMAIL}
+    # debug
+}
+
+# If CADDY_DOMAIN is like "example.com", HTTPS will be automatic.
+# For local dev, set CADDY_DOMAIN to ":80" in .env (serves HTTP only).
+{$CADDY_DOMAIN} {
+    tls internal  # self-signed by Caddy's internal CA
+
+    @api path /api*
+    handle @api {
+        reverse_proxy {$API_UPSTREAM}
+    }
+
+    # Everything else → UI
+    handle {
+        reverse_proxy {$UI_UPSTREAM}
+    }
+
+    # Good default security/headers (tweak as desired)
+    header {
+        -Server
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy no-referrer-when-downgrade
+    }
+    # Health endpoint for load balancers / k8s (optional)
+    respond /_health 200
+}

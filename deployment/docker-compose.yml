@@ -1,0 +1,112 @@
+# Compose V2 (omit 'version' key)
+services:
+    db:
+        image: mysql:8.0
+        restart: unless-stopped
+        environment:
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+        volumes:
+            - mysql_data:/var/lib/mysql
+        networks:
+            - backend
+        healthcheck:
+            test: ["CMD-SHELL", "mysqladmin ping -h localhost -u${MYSQL_USER} -p${MYSQL_PASSWORD} --silent"]
+            interval: 10s
+            timeout: 5s
+            retries: 10
+            start_period: 20s
+
+    api:
+        build:
+            context: ../api
+            dockerfile: Dockerfile
+        # No host port; internal only
+        environment:
+            # Masonite / app should read these (adjust names if your app uses different)
+            DB_HOST: db
+            DB_USER: ${MYSQL_USER}
+            DB_PASSWORD: ${MYSQL_PASSWORD}
+            DB_NAME: ${MYSQL_DATABASE}
+            DB_PORT: 3306
+            # Optional: tell app what port to bind
+            APP_HOST: 0.0.0.0
+            APP_PORT: 5000
+        depends_on:
+            db:
+                condition: service_healthy
+        volumes:
+            - ../api:/app
+        networks:
+            - backend
+        healthcheck:
+            # Requires curl in the image (present in the Python Dockerfile we wrote)
+            test: ["CMD-SHELL", "curl -fsS http://localhost:5000/health >/dev/null || exit 1"]
+            interval: 10s
+            timeout: 3s
+            retries: 10
+            start_period: 20s
+
+    ui:
+        build:
+            context: ../ui
+            dockerfile: Dockerfile
+        # For dev: UI runs its own dev server on 8080 (adjust if yours differs)
+        environment:
+            UI_PORT: 8080
+            API_BASE_URL: /api
+        depends_on:
+            api:
+                condition: service_healthy
+        volumes:
+            - ../ui:/app
+        networks:
+            - backend
+        healthcheck:
+            # Uses Node's built-in HTTP client; no curl/wget needed in the image
+            test:
+              [
+                  "CMD-SHELL",
+                  "node -e \"require('http').get('http://localhost:8080',r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))\""
+              ]
+            interval: 15s
+            timeout: 5s
+            retries: 10
+            start_period: 25s
+
+    caddy:
+        image: caddy:2.8
+        restart: unless-stopped
+        ports:
+            - "80:80"
+            - "443:443"
+        environment:
+            CADDY_DOMAIN: ${CADDY_DOMAIN:-:80}
+            CADDY_EMAIL: ${CADDY_EMAIL:-admin@local}
+            UI_UPSTREAM: ui:8080
+            API_UPSTREAM: api:5000
+        volumes:
+            - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+            - caddy_data:/data
+            - caddy_config:/config
+        depends_on:
+            ui:
+                condition: service_healthy
+            api:
+                condition: service_healthy
+        networks:
+            - backend
+            - web
+
+volumes:
+    mysql_data:
+    caddy_data:
+    caddy_config:
+
+networks:
+    backend:
+        driver: bridge
+    web:
+        driver: bridge
