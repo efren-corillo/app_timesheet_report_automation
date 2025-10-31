@@ -1,28 +1,32 @@
 # ui/Dockerfile
-# Quasar (Vue 3) dev server. For prod, see "build" stage notes below.
-
 FROM node:20-alpine AS base
 WORKDIR /app
-
-# Faster installs & reproducibility
 ENV CI=1
 RUN corepack enable
 
-# Install dependencies first (cacheable)
-COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* ./
-# Choose one package manager; here we use yarn if present, else npm
-RUN if [ -f yarn.lock ]; then yarn install --frozen-lockfile; \
-    elif [ -f pnpm-lock.yaml ]; then corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile; \
-    else npm ci; fi
+# Copy manifests if they exist (won't fail if some are missing)
+COPY package.json ./
+COPY yarn.lock* ./
+COPY package-lock.json* ./
+COPY pnpm-lock.yaml* ./
 
-# Copy source
+# Install deps with the best available manager/lockfile
+RUN if [ -f yarn.lock ]; then \
+      yarn install --frozen-lockfile; \
+    elif [ -f pnpm-lock.yaml ]; then \
+      corepack prepare pnpm@latest --activate && pnpm install --frozen-lockfile; \
+    elif [ -f package-lock.json ]; then \
+      npm ci; \
+    elif [ -f package.json ]; then \
+      npm install; \
+    else \
+      echo "No package.json found; skipping install"; \
+    fi
+
+# Then copy the rest of the sources
 COPY . .
 
-# Expose Quasar dev server
 EXPOSE 8080
-
-# Dev command (edit if your script name differs)
-# Quasar CLI usually: "quasar dev" or "yarn dev"
 CMD if [ -f yarn.lock ]; then \
       yarn dev -H 0.0.0.0 -p 8080; \
     elif [ -f pnpm-lock.yaml ]; then \
