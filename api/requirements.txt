@@ -1,0 +1,8 @@
+# api/requirements.txt
+# Minimal Masonite + MySQL (pure-Python driver to avoid system libs)
+masonite>=4
+masonite-orm>=2
+PyMySQL>=1.1
+python-dotenv>=1.0
+# dev utils (optional)
+uvicorn>=0.30

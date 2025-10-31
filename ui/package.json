@@ -1,0 +1,14 @@
+{
+  "name": "timesheet-ui",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "quasar dev -m spa",
+    "build": "quasar build -m spa"
+  },
+  "devDependencies": {
+    "@quasar/app-vite": "^2.0.0",
+    "quasar": "^2.16.0",
+    "vue": "^3.5.0"
+  }
+}
