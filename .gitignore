@@ -1,0 +1,9 @@
+ui/quasar.config.js.temporary.compiled.*
+ui/dist
+ui/node_modules
+node_modules
+dist
+.git
+tmp
+.DS_Store
+.env

@@ -5,7 +5,7 @@ ENV CI=1
 RUN corepack enable
 
 # Copy manifests if they exist (won't fail if some are missing)
-COPY package.json ./
+COPY ../ui-back/package.json ./
 COPY yarn.lock* ./
 COPY package-lock.json* ./
 COPY pnpm-lock.yaml* ./
@@ -24,16 +24,15 @@ RUN if [ -f yarn.lock ]; then \
     fi
 
 # Then copy the rest of the sources
-COPY . .
+COPY ../ui-back .
 
-EXPOSE 8080
-CMD if [ -f yarn.lock ]; then \
-      yarn dev -H 0.0.0.0 -p 8080; \
-    elif [ -f pnpm-lock.yaml ]; then \
-      pnpm dev --host 0.0.0.0 --port 8080; \
-    else \
-      npm run dev -- --host 0.0.0.0 --port 8080; \
-    fi
+# CMD if [ -f yarn.lock ]; then \
+#      yarn dev -H 0.0.0.0 -p 8080; \
+#    elif [ -f pnpm-lock.yaml ]; then \
+#      pnpm dev --host 0.0.0.0 --port 8080; \
+#    else \
+#      npm run dev -- --host 0.0.0.0 --port 8080; \
+#    fi
 
 # -------- Production build example (optional) --------
 # FROM base AS build
@@ -44,3 +43,10 @@ CMD if [ -f yarn.lock ]; then \
 # # Then either:
 # # 1) copy dist/ into a Caddy image and serve static files, or
 # # 2) keep your reverse-proxy to the dev server in compose for local only
+
+EXPOSE 8080
+CMD sh -lc '\
+  if ! npx --yes quasar -v >/dev/null 2>&1; then \
+    echo "Installing Quasar locally..." && npm i -D @quasar/app-vite quasar vue; \
+  fi; \
+  npx quasar dev -m spa --host 0.0.0.0 --port 8080'
