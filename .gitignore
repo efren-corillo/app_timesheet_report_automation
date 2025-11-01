@@ -1,6 +1,10 @@
 ui/quasar.config.js.temporary.compiled.*
 ui/dist
 ui/node_modules
+api/vapi
+api/.env.testing
+api/.env
+
 node_modules
 dist
 .git
