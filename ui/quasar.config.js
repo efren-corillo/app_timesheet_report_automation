@@ -57,7 +57,10 @@ export default defineConfig((/* ctx */) => {
       // polyfillModulePreload: true,
       // distDir
 
-      // extendViteConf (viteConf) {},
+      extendViteConf (viteConf) {
+        viteConf.server ??= {}
+        viteConf.server.allowedHosts = ['app.local.test']
+      },
       // viteVuePluginOptions: {},
       
       // vitePlugins: [

@@ -326,7 +326,7 @@
 
 <script>
 	import EssentialLink from 'components/EssentialLink.vue'
-	import Messages from "./Messages.vue";
+	// import Messages from "./Messages.vue";
 
 	import {defineComponent, ref} from 'vue'
 	import {useQuasar} from "quasar";
@@ -336,7 +336,7 @@
 
 		components: {
 			EssentialLink,
-			Messages
+			// Messages
 		},
 
 		setup() {
