@@ -11,7 +11,7 @@
 					aria-label="Menu"
 				/>
 				<q-toolbar-title>
-					Quasar App
+					Timesheet App
 				</q-toolbar-title>
 				<q-space/>
 				<div class="q-gutter-sm row items-center no-wrap">
@@ -20,11 +20,7 @@
 					       v-if="$q.screen.gt.sm">
 					</q-btn>
 					<q-btn round dense flat color="white" icon="fab fa-github" type="a"
-					       href="https://github.com/pratik227/quasar-admin" target="_blank">
-					</q-btn>
-					<q-btn round dense flat style="color:red !important;" type="a" href="https://github.com/sponsors/pratik227"
-					       target="_blank">
-						<i class="fa fa-heart fa-2x fa-beat"></i>
+					       href="https://github.com/efren-corillo" target="_blank">
 					</q-btn>
 					<q-btn round dense flat color="white" icon="notifications">
 						<q-badge color="red" text-color="white" floating>
@@ -49,7 +45,7 @@
 				</div>
 			</q-toolbar>
 		</q-header>
-
+sdfsd
 		<q-drawer
 			v-model="leftDrawerOpen"
 			show-if-above
@@ -250,7 +246,7 @@
 						<q-icon name="date_range"/>
 					</q-item-section>
 					<q-item-section>
-						<q-item-label>Calendar</q-item-label>
+						<q-item-label>Timesheet</q-item-label>
 					</q-item-section>
 				</q-item>
 
@@ -323,35 +319,25 @@
 		</q-page-container>
 	</q-layout>
 </template>
-
 <script>
+	import {defineComponent, ref} from 'vue'
+
+	export default defineComponent({
+		name: 'MainLayout'
+	})
+</script>
+<script setup>
 	import EssentialLink from 'components/EssentialLink.vue'
-	// import Messages from "./Messages.vue";
+	import Messages from "./Messages.vue";
 
 	import {defineComponent, ref} from 'vue'
 	import {useQuasar} from "quasar";
 
-	export default defineComponent({
-		name: 'MainLayout',
-
-		components: {
-			EssentialLink,
-			// Messages
-		},
-
-		setup() {
-			const leftDrawerOpen = ref(false)
-			const $q = useQuasar()
-
-			return {
-				$q,
-				leftDrawerOpen,
-				toggleLeftDrawer() {
-					leftDrawerOpen.value = !leftDrawerOpen.value
-				}
-			}
-		}
-	})
+	const leftDrawerOpen = ref(false)
+	const $q = useQuasar()
+	const toggleLeftDrawer = () => {
+		leftDrawerOpen.value = !leftDrawerOpen.value
+	}
 </script>
 
 <style>
