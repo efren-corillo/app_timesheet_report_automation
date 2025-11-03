@@ -6,6 +6,8 @@ set -euo pipefail
 PROJECT_NAME="${PROJECT_NAME:-timesheetapp}"
 COMPOSE_FILE="deployment/docker-compose.yml"
 ENV_FILE="deployment/.env"
+export LOCAL_UID="${LOCAL_UID:-$(id -u)}"
+export LOCAL_GID="${LOCAL_GID:-$(id -g)}"
 
 usage() {
   cat <<'EOF'

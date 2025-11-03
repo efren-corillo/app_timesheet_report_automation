@@ -13,6 +13,8 @@ class CreateUsersTable(Migration):
             table.string("password")
             table.string("remember_token").nullable()
             table.string("phone").nullable()
+            table.unsigned_integer("user_type_id")
+            table.foreign("user_type_id").references("id").on("user_types")
             table.timestamp("verified_at").nullable()
             table.timestamps()
             table.soft_deletes()

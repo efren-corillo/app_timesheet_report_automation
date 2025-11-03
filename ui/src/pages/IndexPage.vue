@@ -22,7 +22,7 @@
 	const generateBtnClicked = ref(false);
 	const generateTimesheet = () => {
 		generateBtnClicked.value = !generateBtnClicked.value;
-		console.log(api);
+
 		api.get('/generate-weekly-report').then((res) => {
 			console.log(res);
 		}).catch(
