@@ -21,4 +21,6 @@ export default defineBoot(({ app }) => {
   //       so you can easily perform requests against your app's API
 })
 
-export { api }
+// export { api }
+export { axios, api }
+
