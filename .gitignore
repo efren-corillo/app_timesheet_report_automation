@@ -13,3 +13,4 @@ tmp
 .env
 .idea
 .idea/
+/caddy/config/app.local.test.crt

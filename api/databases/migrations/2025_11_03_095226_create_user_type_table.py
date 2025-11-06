@@ -10,7 +10,7 @@ class CreateUserTypeTable(Migration):
         """
         with self.schema.create("user_types") as table:
             table.increments("id")
-            table.enum("type", ["superadmin","admin","supervisor","member"]).default("member")
+            table.enum("type", ["superadmin","admin","supervisor","contractor"]).default("contractor")
             table.boolean("active").default(True)
             table.timestamps()
 
