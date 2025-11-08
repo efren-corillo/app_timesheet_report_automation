@@ -5,14 +5,6 @@
 	</q-page>
 </template>
 
-<script>
-	import { defineComponent } from 'vue';
-
-	export default defineComponent({
-		name: 'PageIndex'
-	})
-</script>
-
 <script setup>
 	import { ref } from 'vue';
 	import { api } from 'boot/axios.js';
